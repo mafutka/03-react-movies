@@ -6,11 +6,14 @@ import SearchBar from '../SearchBar/SearchBar';
 import MovieGrid from '../MovieGrid/MovieGrid';
 import Loader from '../Loader/Loader';
 import ErrorMessage from './ErrorMessage/ErrorMessage';
+import MovieModal from '../MovieModal/MovieModal';
+ 
 
 export default function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const handleSearch = async (query: string) => {
     setLoading(true);
@@ -33,8 +36,12 @@ export default function App() {
     }
   };
 
-  const handleSelectMovie = (movie: Movie) => {
-    console.log('Selected movie:', movie);
+   const handleSelectMovie = (movie: Movie) => {
+    setSelectedMovie(movie); 
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMovie(null); 
   };
 
   return (
@@ -43,7 +50,12 @@ export default function App() {
       <SearchBar onSubmit={handleSearch} />
       {loading && <Loader />}
       {error && <ErrorMessage />}
-      {!loading && !error && <MovieGrid movies={movies} onSelect={handleSelectMovie} />}
+      {!loading && !error && (
+        <MovieGrid movies={movies} onSelect={handleSelectMovie} />
+      )}
+      {selectedMovie && (
+        <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
+      )}
     </>
   );
 }
